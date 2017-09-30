@@ -2,8 +2,9 @@
 #              https://stackoverflow.com/questions/8703496/hash-map-in-python#8703509
 import os
 import gzip
+import numpy as np
 #import PIL.Image as pil
-directory = "data"
+directory = "data/"
 
 def getGzFiles(directory):
     #List all the files in directory
@@ -15,43 +16,40 @@ def getGzFiles(directory):
             files[filename[:filename.index("-", filename.index("-")+1)]] = filename
     return files
 
-def readLabelFile(filename):
+def readFile(filename):
     with gzip.open(filename,'rb') as f:
         magic = f.read(4)
-        dimensions = magic[3]
         #Check for number of dimensions in a file, if 1 the file is considered LABEL file
-        if(dimensions == 1):
+        if(magic[3] == 1):
             #get size of the items array
             items = int.from_bytes(f.read(4), byteorder="big")
             labels = []
             for label in range(items):
                 labels.append(int.from_bytes(f.read(1), byteorder="big"))
-            print(labels)
-            print(len(labels))
+            print("Read %d labels from %s" % (len(labels), filename))
+            return labels
+        # image file with data
+        else:
+            arrays = []
+            arrays = [int.from_bytes(f.read(4), byteorder="big") for i in range(magic[3])]
+            data = np.zeros((arrays[0], arrays[1], arrays[2]))
+            for image in range(arrays[0]):
+                print("Working on a Image[%d]" % image)
+                for row in range(arrays[1]):
+                    data[image][row] = int.from_bytes(f.read(arrays[2]), byteorder="big")
+            return data
 
-        # magicNum = int(magic)
-        # print(magicNum)
-        # magicNum = int.from_bytes(magic, byteorder='big')
-        #print(magicNum)
-        
-        #print(int.from_bytes(f.read(4), byteorder='big'))
-        #magic = f.read(4)
-        #print(int(magic))
-        #magic = int(f.read(4))
-        #print(magic)
-        #magic = int(magic)
 
-        #nolab = int(f.read(4))
-        #nolab = int(nolab)
-        #labels = [f.read(1) for i in range(nolab)]
-        #labels = [int(label)for label in labels]
-        return magic
-
-#train_labels = read_labels_from_file('data/t10k-images-idx3-ubyte.gz')
-files = getGzFiles(directory)
-for file in files:
+dirFiles = getGzFiles(directory)
+labels = {}
+data = {}
+for file in dirFiles:
     if "labels" in file:
-        readLabelFile(directory + "/" + files[file])
+        #Directory [file name] -> array of labels
+        labels[file[:file.index("-")]] = readFile(directory + dirFiles[file])
+    elif "images" in file:
+        #Directory [file name] -> 3 dimentional array of pixels
+        data[file[:file.index("-")]] = readFile(directory + dirFiles[file])
 
 #img = train_images[4999]
 #img = np.array(img)

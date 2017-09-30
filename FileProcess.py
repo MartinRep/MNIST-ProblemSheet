@@ -3,7 +3,6 @@
 import os
 import gzip
 import numpy as np
-# from PIL import Image
 import PIL.Image as pil
 import datetime
 
@@ -45,25 +44,38 @@ def read_file(filename):
             return data
 
 
+def show_picture(image):
+    for column in range(len(image)):
+        for pixel in range(len(image[0])):
+            if image[column][pixel] > 128:
+                print("#", end='')
+            else:
+                print(".", end='')
+                # print(image[column][pixel])
+        print("")
+
+
 directory = "data/"
-startTime = datetime.datetime.now()
+
 dirFiles = get_gz_files(directory)
 labels = {}
 data = {}
 for file in dirFiles:
+    startTime = datetime.datetime.now()
     if "labels" in file:
         # Directory [file name] -> array of labels
         labels[file[:file.index("-")]] = read_file(directory + dirFiles[file])
     elif "images" in file:
         # Directory [file name] -> 3 dimenional array of pixels
         data[file[:file.index("-")]] = read_file(directory + dirFiles[file])
+    stopTime = datetime.datetime.now()
+    print("File %s took %.10s to process" % (dirFiles[file], stopTime - startTime))
 
-stopTime = datetime.datetime.now()
+# Test
 img = data["t10k"][999]
-print(img)
-img = np.array(img)
-img = pil.fromarray(img).convert('RGB')
-# img = convert('RGB')
-img.show
-img.save('2.png')
-print("Time taken to process %s" % (stopTime-startTime))
+show_picture(img)
+# print(img)
+# img = np.array(img)
+# img = pil.fromarray(img).convert('RGB')
+# img.show
+# img.save('2.png')

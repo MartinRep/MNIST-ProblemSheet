@@ -3,25 +3,28 @@
 import os
 import gzip
 import numpy as np
-#import PIL.Image as pil
-directory = "data/"
+# from PIL import Image
+import PIL.Image as pil
+import datetime
 
-def getGzFiles(directory):
-    #List all the files in directory
+
+def get_gz_files(dir):
+    # List all the files in directory
     files = dict()
-    for filename in os.listdir(directory):
-        #adds only Gzip files to the list
-        if(filename.find(".gz")):
-            #Directory (hashmap) key = filename up to second "-", Value = filename
+    for filename in os.listdir(dir):
+        # adds only Gzip files to the list
+        if filename.find(".gz"):
+            # Directory (hashmap) key = filename up to second "-", Value = filename
             files[filename[:filename.index("-", filename.index("-")+1)]] = filename
     return files
 
-def readFile(filename):
+
+def read_file(filename):
     with gzip.open(filename,'rb') as f:
         magic = f.read(4)
-        #Check for number of dimensions in a file, if 1 the file is considered LABEL file
-        if(magic[3] == 1):
-            #get size of the items array
+        # Check for number of dimensions in a file, if 1 the file is considered LABEL file
+        if magic[3] == 1:
+            # get size of the items array
             items = int.from_bytes(f.read(4), byteorder="big")
             labels = []
             for label in range(items):
@@ -33,27 +36,34 @@ def readFile(filename):
             arrays = []
             arrays = [int.from_bytes(f.read(4), byteorder="big") for i in range(magic[3])]
             data = np.zeros((arrays[0], arrays[1], arrays[2]))
-            for image in range(arrays[0]):
-                print("Working on a Image[%d]" % image)
-                for row in range(arrays[1]):
-                    data[image][row] = int.from_bytes(f.read(arrays[2]), byteorder="big")
+            if arrays[0] <= 10000:
+                print("Working on a file %s processing %d images. Please wait..." % (filename, arrays[0]))
+                for image in range(arrays[0]):
+                    for row in range(arrays[1]):
+                        for column in range(arrays[2]):
+                            data[image][row][column] = int.from_bytes(f.read(1), byteorder="big")
             return data
 
 
-dirFiles = getGzFiles(directory)
+directory = "data/"
+startTime = datetime.datetime.now()
+dirFiles = get_gz_files(directory)
 labels = {}
 data = {}
 for file in dirFiles:
     if "labels" in file:
-        #Directory [file name] -> array of labels
-        labels[file[:file.index("-")]] = readFile(directory + dirFiles[file])
+        # Directory [file name] -> array of labels
+        labels[file[:file.index("-")]] = read_file(directory + dirFiles[file])
     elif "images" in file:
-        #Directory [file name] -> 3 dimentional array of pixels
-        data[file[:file.index("-")]] = readFile(directory + dirFiles[file])
+        # Directory [file name] -> 3 dimenional array of pixels
+        data[file[:file.index("-")]] = read_file(directory + dirFiles[file])
 
-#img = train_images[4999]
-#img = np.array(img)
-#img = pil.fromarray(img)
-#img = convert('RGB')
-#img.show
-#img.save('2.png')
+stopTime = datetime.datetime.now()
+img = data["t10k"][999]
+print(img)
+img = np.array(img)
+img = pil.fromarray(img).convert('RGB')
+# img = convert('RGB')
+img.show
+img.save('2.png')
+print("Time taken to process %s" % (stopTime-startTime))

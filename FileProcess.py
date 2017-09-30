@@ -1,5 +1,19 @@
+# Adapted from https://stackoverflow.com/questions/120656/directory-listing-in-python#120701
+#              https://stackoverflow.com/questions/8703496/hash-map-in-python#8703509
+import os
 import gzip
 #import PIL.Image as pil
+
+def getFiles(directory):
+    #List all the files in directory
+    files = dict()
+    for filename in os.listdir(directory):
+        #adds only Gzip files to the list
+        if(filename.find(".gz")):
+            #Directory (hashmap) key = filename up to second "-", Value = filename
+            files[filename[:filename.index("-",filename.index("-")+1)]] = filename
+    return files
+
 def read_labels_from_file(filename):
     with gzip.open(filename,'rb') as f:
         magic = f.read(4)
@@ -20,9 +34,12 @@ def read_labels_from_file(filename):
         #nolab = int(nolab)
         #labels = [f.read(1) for i in range(nolab)]
         #labels = [int(label)for label in labels]
-        return labels
+        return magic
 
-train_labels = read_labels_from_file('data/t10k-images-idx3-ubyte.gz')
+#train_labels = read_labels_from_file('data/t10k-images-idx3-ubyte.gz')
+files = getFiles('data/')
+for file in files:
+    print(files[file])
 
 #img = train_images[4999]
 #img = np.array(img)

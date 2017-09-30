@@ -3,25 +3,36 @@
 import os
 import gzip
 #import PIL.Image as pil
+directory = "data"
 
-def getFiles(directory):
+def getGzFiles(directory):
     #List all the files in directory
     files = dict()
     for filename in os.listdir(directory):
         #adds only Gzip files to the list
         if(filename.find(".gz")):
             #Directory (hashmap) key = filename up to second "-", Value = filename
-            files[filename[:filename.index("-",filename.index("-")+1)]] = filename
+            files[filename[:filename.index("-", filename.index("-")+1)]] = filename
     return files
 
-def read_labels_from_file(filename):
+def readLabelFile(filename):
     with gzip.open(filename,'rb') as f:
         magic = f.read(4)
-        print(magic)
+        dimensions = magic[3]
+        #Check for number of dimensions in a file, if 1 the file is considered LABEL file
+        if(dimensions == 1):
+            #get size of the items array
+            items = int.from_bytes(f.read(4), byteorder="big")
+            labels = []
+            for label in range(items):
+                labels.append(int.from_bytes(f.read(1), byteorder="big"))
+            print(labels)
+            print(len(labels))
+
         # magicNum = int(magic)
         # print(magicNum)
-        magicNum = int.from_bytes(magic, byteorder='big')
-        print(magicNum)
+        # magicNum = int.from_bytes(magic, byteorder='big')
+        #print(magicNum)
         
         #print(int.from_bytes(f.read(4), byteorder='big'))
         #magic = f.read(4)
@@ -37,9 +48,10 @@ def read_labels_from_file(filename):
         return magic
 
 #train_labels = read_labels_from_file('data/t10k-images-idx3-ubyte.gz')
-files = getFiles('data/')
+files = getGzFiles(directory)
 for file in files:
-    print(files[file])
+    if "labels" in file:
+        readLabelFile(directory + "/" + files[file])
 
 #img = train_images[4999]
 #img = np.array(img)

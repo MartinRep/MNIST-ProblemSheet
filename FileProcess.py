@@ -2,12 +2,16 @@
 #              https://stackoverflow.com/questions/8703496/hash-map-in-python#8703509
 #              https://pyformat.info/
 #              https://stackoverflow.com/questions/517127/how-do-i-write-output-in-same-place-on-the-console#517207
+#              https://stackoverflow.com/questions/1274405/how-to-create-new-folder#1274465
+#              https://stackoverflow.com/questions/11760095/convert-binary-string-to-numpy-array
+#              https://docs.scipy.org/doc/numpy/reference/arrays.dtypes.html
 import os
 import gzip
 import numpy as np
 import PIL.Image as pil
 import datetime
-import sys
+import os
+from itertools import chain
 
 labels = {}
 data = {}
@@ -47,8 +51,8 @@ def read_file(filename):
                 # sys.stdout.flush()
                 print("\r%.0f %% Images processed" % (image/arrays[0]*100), end='')
                 for row in range(arrays[1]):
-                    for column in range(arrays[2]):
-                        file_data[image][row][column] = int.from_bytes(f.read(1), byteorder="big")
+                    row_array = np.fromstring(f.read(arrays[2]), np.dtype(('uint8', 1)))
+                    file_data[image][row] = row_array.tolist()
             print("", end='\n')
             return file_data
 
@@ -63,6 +67,7 @@ def show_picture(image):
                 print("#", end='')
             else:
                 print(".", end='')
+        print("", end='\n')
 
 
 # Save images starting with name. Create filename with picture number and digit they representing
@@ -77,13 +82,21 @@ def save_img(title):
         out_dir = src_dir + title + "/"
         # combines name with index and digit with extension
         out_filename = out_dir + title + out_filename + str(labels[title][index]) + ".png"
+        # dir is not keyword
+        try:
+            os.makedirs(out_dir)
+        except OSError:
+            pass
+        # let exception propagate if we just can't
         # Saves the file
         cur_img.save(out_filename)
         index = index + 1
         print("\rImage %s saved" % out_filename, end='')
 
 
-dirFiles = get_gz_files(src_dir)
+# dirFiles = get_gz_files(src_dir)
+# dev
+dirFiles = {'t10k-labels': 't10k-labels-idx1-ubyte.gz', 't10k-images': 't10k-images-idx3-ubyte.gz'}
 for file in dirFiles:
     # File process stopwatch start
     startTime = datetime.datetime.now()

@@ -11,7 +11,6 @@ import numpy as np
 import PIL.Image as pil
 import datetime
 import os
-from itertools import chain
 
 labels = {}
 data = {}
@@ -23,7 +22,7 @@ def get_gz_files(loc_directory):
     files = dict()
     for filename in os.listdir(loc_directory):
         # adds only Gzip files to the list
-        if filename.find(".gz"):
+        if ".gz" in filename:
             # Directory (hash-map) key = filename up to second "-", Value = filename
             files[filename[:filename.index("-", filename.index("-")+1)]] = filename
     return files
@@ -94,9 +93,9 @@ def save_img(title):
         print("\rImage %s saved" % out_filename, end='')
 
 
-# dirFiles = get_gz_files(src_dir)
+dirFiles = get_gz_files(src_dir)
 # dev
-dirFiles = {'t10k-labels': 't10k-labels-idx1-ubyte.gz', 't10k-images': 't10k-images-idx3-ubyte.gz'}
+# dirFiles = {'t10k-labels': 't10k-labels-idx1-ubyte.gz', 't10k-images': 't10k-images-idx3-ubyte.gz'}
 for file in dirFiles:
     # File process stopwatch start
     startTime = datetime.datetime.now()

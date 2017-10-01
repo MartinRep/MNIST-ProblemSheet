@@ -11,7 +11,7 @@ import sys
 
 labels = {}
 data = {}
-directory = "data/"
+src_dir = "data/"
 
 
 def get_gz_files(loc_directory):
@@ -75,23 +75,25 @@ def save_img(title):
         cur_img = pil.fromarray(cur_img).convert('RGB')
         # formats filename to include zeros
         out_filename = '-{:06.0f}-'.format(index)
+        out_dir = src_dir + title + "\\"
         # combines name with index and digit with extension
-        out_filename = directory + title + out_filename + str(labels[title][index]) + ".png"
+        out_filename = src_dir + title + out_filename + str(labels[title][index]) + ".png"
         # Saves the file
         cur_img.save(out_filename)
         index = index + 1
         print("\rImage %s saved" % out_filename, end='')
 
-dirFiles = get_gz_files(directory)
+
+dirFiles = get_gz_files(src_dir)
 for file in dirFiles:
     # File process stopwatch start
     startTime = datetime.datetime.now()
     if "labels" in file:
         # Directory [file name] -> array of labels
-        labels[file[:file.index("-")]] = read_file(directory + dirFiles[file])
+        labels[file[:file.index("-")]] = read_file(src_dir + dirFiles[file])
     elif "images" in file:
         # Directory [file name] -> 3 D array of pixels
-        data[file[:file.index("-")]] = read_file(directory + dirFiles[file])
+        data[file[:file.index("-")]] = read_file(src_dir + dirFiles[file])
     # File process stopwatch stop
     stopTime = datetime.datetime.now()
     print("File %s took %.10s to process" % (dirFiles[file], stopTime - startTime))

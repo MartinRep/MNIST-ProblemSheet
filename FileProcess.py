@@ -63,7 +63,6 @@ def show_picture(image):
                 print("#", end='')
             else:
                 print(".", end='')
-        print("")
 
 
 # Save images starting with name. Create filename with picture number and digit they representing
@@ -75,9 +74,9 @@ def save_img(title):
         cur_img = pil.fromarray(cur_img).convert('RGB')
         # formats filename to include zeros
         out_filename = '-{:06.0f}-'.format(index)
-        out_dir = src_dir + title + "\\"
+        out_dir = src_dir + title + "/"
         # combines name with index and digit with extension
-        out_filename = src_dir + title + out_filename + str(labels[title][index]) + ".png"
+        out_filename = out_dir + title + out_filename + str(labels[title][index]) + ".png"
         # Saves the file
         cur_img.save(out_filename)
         index = index + 1

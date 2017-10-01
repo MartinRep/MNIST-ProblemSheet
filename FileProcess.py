@@ -1,7 +1,7 @@
 # Adapted from https://stackoverflow.com/questions/120656/directory-listing-in-python#120701
 #              https://stackoverflow.com/questions/8703496/hash-map-in-python#8703509
 #              https://pyformat.info/
-#              https://pyformat.info/
+#              https://stackoverflow.com/questions/517127/how-do-i-write-output-in-same-place-on-the-console#517207
 import os
 import gzip
 import numpy as np
@@ -44,11 +44,12 @@ def read_file(filename):
             file_data = np.zeros((arrays[0], arrays[1], arrays[2]))
             print("Working on a file %s processing %d images. Please wait..." % (filename, arrays[0]))
             for image in range(arrays[0]):
-                sys.stdout.write("Images processed: %.0f   \r" % (image/arrays[0]/100))
-                sys.stdout.flush()
+                # sys.stdout.flush()
+                print("\r%.0f %% Images processed" % (image/arrays[0]*100), end='')
                 for row in range(arrays[1]):
                     for column in range(arrays[2]):
                         file_data[image][row][column] = int.from_bytes(f.read(1), byteorder="big")
+            print("", end='\n')
             return file_data
 
 
@@ -79,7 +80,7 @@ def save_img(title):
         # Saves the file
         cur_img.save(out_filename)
         index = index + 1
-
+        print("\rImage %s saved" % out_filename, end='')
 
 dirFiles = get_gz_files(directory)
 for file in dirFiles:
@@ -89,7 +90,7 @@ for file in dirFiles:
         # Directory [file name] -> array of labels
         labels[file[:file.index("-")]] = read_file(directory + dirFiles[file])
     elif "images" in file:
-        # Directory [file name] -> 3 dimenional array of pixels
+        # Directory [file name] -> 3 D array of pixels
         data[file[:file.index("-")]] = read_file(directory + dirFiles[file])
     # File process stopwatch stop
     stopTime = datetime.datetime.now()

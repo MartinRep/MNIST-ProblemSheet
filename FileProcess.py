@@ -42,14 +42,15 @@ def read_file(filename):
         # image file with data
         else:
             arrays = [int.from_bytes(f.read(4), byteorder="big") for i in range(magic[3])]
+            numOfImg, rows, columns = arrays[0], arrays[1], arrays[2]
             # creates file structure. Sizes of array are dynamically created from file structure
-            file_data = np.zeros((arrays[0], arrays[1], arrays[2]))
-            print("Working on a file %s processing %d images. Please wait..." % (filename, arrays[0]))
+            file_data = np.zeros((numOfImg, rows, columns))
+            print("Working on a file %s processing %d images. Please wait..." % (filename, numOfImg))
             # reads bytes as a whole picture instead of individual pixels. Much faster!!!
-            for image in range(arrays[0]):
-                print("\r%.0f %% Images processed" % (image/arrays[0]*100), end='')
-                pic_array = np.fromstring(f.read(arrays[1] * arrays[2]), np.dtype(('uint8', 1)))    # reads 28 * 28 pixels at once
-                pic_array = pic_array.reshape(28,28)
+            for image in range(numOfImg):
+                print("\r%.0f %% Images processed" % (image/numOfImg*100), end='')
+                pic_array = np.fromstring(f.read(rows * columns), np.dtype(('uint8', 1)))    # reads 28 * 28 pixels at once
+                pic_array = pic_array.reshape(rows, columns)        # converts 1D array into 2D array of pixels
                 file_data[image] = pic_array.tolist()
             print("", end='\n')
             return file_data
@@ -57,8 +58,8 @@ def read_file(filename):
 
 # Prints out image to console
 def show_picture(image):
-    for column in range(len(image)):
-        for pixel in range(len(image[0])):
+    for column, col in enumerate(image):
+        for pixel, pix in enumerate(image[column]):
             # print(image[column][pixel])
             # Replaces pixel colors dark for '#' bright for '.'
             if image[column][pixel] > 128:
@@ -85,16 +86,19 @@ def save_img(title):
             os.makedirs(out_dir)
         except OSError:
             pass
-        # let exception propagate if we just can't
+        # let exception propagate
         # Saves the file
         cur_img.save(out_filename)
         index = index + 1
         print("\rImage %s saved" % out_filename, end='')
 
 
+# gets all the *.gz files from directory Data.
 dirFiles = get_gz_files(src_dir)
+
 # dev
 # dirFiles = {'t10k-labels': 't10k-labels-idx1-ubyte.gz', 't10k-images': 't10k-images-idx3-ubyte.gz'}
+
 for file in dirFiles:
     # File process stopwatch start
     startTime = datetime.datetime.now()
@@ -108,7 +112,7 @@ for file in dirFiles:
     stopTime = datetime.datetime.now()
     print("File %s took %.10s to process" % (dirFiles[file], stopTime - startTime))
 
-# loops all the arrays with data from files and save them to disk
+#loops all the arrays with data from files and save them to disk
 for name in data:
     save_img(name)
 

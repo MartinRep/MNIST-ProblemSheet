@@ -37,7 +37,7 @@ def read_file(filename):
             items = int.from_bytes(f.read(4), byteorder="big")
             for label in range(items):
                 cur_labels.append(int.from_bytes(f.read(1), byteorder="big"))
-            print("Read %d labels from %s" % (len(cur_labels), filename))
+            print("\nRead %d labels from %s" % (len(cur_labels), filename))
             return cur_labels
         # image file with data
         else:
@@ -45,21 +45,18 @@ def read_file(filename):
             numOfImg, rows, columns = arrays[0], arrays[1], arrays[2]
             # creates file structure. Sizes of array are dynamically created from file structure
             file_data = np.zeros((numOfImg, rows, columns))
-            print("Working on a file %s processing %d images. Please wait..." % (filename, numOfImg))
-            # reads bytes as a whole picture instead of individual pixels. Much faster!!!
-            for image in range(numOfImg):
-                print("\r%.0f %% Images processed" % (image/numOfImg*100), end='')
-                pic_array = np.fromstring(f.read(rows * columns), np.dtype(('uint8', 1)))    # reads 28 * 28 pixels at once
-                pic_array = pic_array.reshape(rows, columns)        # converts 1D array into 2D array of pixels
-                file_data[image] = pic_array.tolist()
-            print("", end='\n')
+            print("\nWorking on a file %s processing %d images. Please wait..." % (filename, numOfImg))
+            # reads bytes as a whole picture array instead of individual pixels. Much faster!!!
+            pic_array = np.fromstring(f.read(numOfImg * rows * columns), np.dtype(('uint8', 1)))    # reads 28 * 28 pixels at once
+            pic_array = pic_array.reshape(numOfImg, rows, columns)        # converts 1D array into 3D array of pixels
+            file_data = pic_array.tolist()
             return file_data
 
 
 # Prints out image to console
 def show_picture(image):
     for column, col in enumerate(image):
-        for pixel, pix in enumerate(image[column]):
+        for pixel, pix in enumerate(col):
             # print(image[column][pixel])
             # Replaces pixel colors dark for '#' bright for '.'
             if image[column][pixel] > 128:
@@ -103,10 +100,10 @@ for file in dirFiles:
     # File process stopwatch start
     startTime = datetime.datetime.now()
     if "labels" in file:
-        # Directory [file name] -> array of labels
+        # Directory(labels) [file name] -> array of labels
         labels[file[:file.index("-")]] = read_file(src_dir + dirFiles[file])
     elif "images" in file:
-        # Directory [file name] -> 3 D array of pixels
+        # Directory(data) [file name] -> 3 D array of pixels
         data[file[:file.index("-")]] = read_file(src_dir + dirFiles[file])
     # File process stopwatch stop
     stopTime = datetime.datetime.now()

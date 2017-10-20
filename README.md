@@ -32,7 +32,6 @@ See below for an example of it.
 
 ### 1. Read the data files
 `pic_array = np.fromstring(f.read(numOfImg * rows * columns), np.dtype(('uint8', 1)))` reads all the pixels at once
-
 `images = pic_array.reshape(numOfImg, rows, columns)` Transform 1D array into 3D array
 
 ### 2. Output an image to the console
@@ -49,17 +48,11 @@ for column, col in enumerate(image): # enumerable used instead od range(len(imag
 
 ### 3. Output the image files as PNGs
 ```
-for index, image in enumerate(data[title]): # Loops over data hashmap of specified title, enumerating index too
-        cur_img = np.array(image)
-        cur_img = pil.fromarray(cur_img).convert('RGB') # PIL.Image library converts array into image
-        out_filename = '-{:06.0f}-'.format(index)  # formats filename to include zeros
-        out_dir = src_dir + title + "/"
-        out_filename = out_dir + title + out_filename + str(labels[title][index]) + ".png" # combines name with index and digit with extension
-        try:    # tries to create output directory.
-            os.makedirs(out_dir)
-        except OSError:
-            pass
-        cur_img.save(out_filename) # Saves the file
+cur_img = np.array(image)
+cur_img = pil.fromarray(cur_img).convert('RGB') # PIL.Image library converts array into image
+out_filename = '-{:06.0f}-'.format(index)  # formats filename to include zeros
+out_filename = out_dir + title + out_filename + str(labels[title][index]) + ".png" # combines name with index and digit with extension
+cur_img.save(out_filename) # Saves the file
 ```
 
 ### Output

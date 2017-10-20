@@ -10,7 +10,6 @@ import gzip
 import numpy as np
 import PIL.Image as pil
 import datetime
-import os
 
 labels = {}
 data = {}
@@ -46,12 +45,12 @@ def read_file(filename):
             # creates file structure. Sizes of array are dynamically created from file structure
             file_data = np.zeros((arrays[0], arrays[1], arrays[2]))
             print("Working on a file %s processing %d images. Please wait..." % (filename, arrays[0]))
+            # reads bytes as a whole picture instead of individual pixels. Much faster!!!
             for image in range(arrays[0]):
-                # sys.stdout.flush()
                 print("\r%.0f %% Images processed" % (image/arrays[0]*100), end='')
-                for row in range(arrays[1]):
-                    row_array = np.fromstring(f.read(arrays[2]), np.dtype(('uint8', 1)))
-                    file_data[image][row] = row_array.tolist()
+                pic_array = np.fromstring(f.read(arrays[1] * arrays[2]), np.dtype(('uint8', 1)))    # reads 28 * 28 pixels at once
+                pic_array = pic_array.reshape(28,28)
+                file_data[image] = pic_array.tolist()
             print("", end='\n')
             return file_data
 
@@ -109,10 +108,11 @@ for file in dirFiles:
     stopTime = datetime.datetime.now()
     print("File %s took %.10s to process" % (dirFiles[file], stopTime - startTime))
 
-# Test
-img = data["t10k"][999]
-show_picture(img)
-print(labels["t10k"][999])
 # loops all the arrays with data from files and save them to disk
 for name in data:
     save_img(name)
+
+# Test
+img = data["t10k"][9999]
+show_picture(img)
+print(labels["t10k"][9999])

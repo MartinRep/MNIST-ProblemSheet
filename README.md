@@ -21,7 +21,6 @@ Name the images in the format `train-XXXXX-Y.png` or `test-XXXXX-Y.png` where `X
 For instance, the five-thousandth training image is labelled 2, so its file name should be `train-04999-2.png`.
 Note the images are indexed from 0, so the five-thousandth image is indexed as 4999.
 See below for an example of it.
-Commit these image files to GitHub.
 
 # Solution
  - Clone this repo.

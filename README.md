@@ -24,11 +24,11 @@ See below for an example of it.
 
 # Solution
  - Clone this repo.
- - Place downloaded ".gz" files into "data/" folder.
+ - Place downloaded `.gz` files into `data/` folder.
  - Download & Install [Python](https://www.python.org/downloads/)
  - Run `pip install -r requirements.txt` to install dependancies
  - Finally `python FileProcess.py`
- - Output files will be in their respected subdirectories inside "/data" folder
+ - Output files will be in their respected subdirectories inside `/data` folder
 
 ### 1. Read the data files
 `pic_array = np.fromstring(f.read(numOfImg * rows * columns), np.dtype(('uint8', 1)))` reads all the pixels at once

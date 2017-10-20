@@ -3,3 +3,5 @@
 Emerging Technologies MNIST Problem sheet
 
 [Assignment link](https://github.com/emerging-technologies/emerging-technologies.github.io/blob/master/problems/digits.md)
+
+![Execution times] (https://github.com/emerging-technologies/emerging-technologies.github.io/blob/master/problems/MNIST Execution times.PNG)

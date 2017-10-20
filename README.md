@@ -24,15 +24,20 @@ See below for an example of it.
 Commit these image files to GitHub.
 
 # Solution
-
+ - Clone this repo.
+ - Place downloaded ".gz" files into "data/" folder.
+ - Download & Install [Python](https://www.python.org/downloads/)
+ - Run `pip install -r requirements.txt` to install dependancies
+ - Finally `python FileProcess.py`
+ - Output files will be in their respected subdirectories inside "/data" folder
 
 ### 1. Read the data files
 ```
- arrays = [int.from_bytes(f.read(4), byteorder="big") for i in range(magic[3])] # Reads data arrays size 4 bytes each. Array size is defined by files magic number
-            numOfImg, rows, columns = arrays[0], arrays[1], arrays[2] # Just a transfer to more human readable variables
-            print("\nWorking on a file %s processing %d images. Please wait..." % (filename, numOfImg))
-            pic_array = np.fromstring(f.read(numOfImg * rows * columns), np.dtype(('uint8', 1)))    # example reads 60,000 x 28 x 28 pixels at once
-            return pic_array.reshape(numOfImg, rows, columns)
+arrays = [int.from_bytes(f.read(4), byteorder="big") for i in range(magic[3])] # Reads data arrays size 4 bytes each. Array size is defined by files magic number
+numOfImg, rows, columns = arrays[0], arrays[1], arrays[2] # Just a transfer to more human readable variables
+print("\nWorking on a file %s processing %d images. Please wait..." % (filename, numOfImg))
+pic_array = np.fromstring(f.read(numOfImg * rows * columns), np.dtype(('uint8', 1)))    # example reads 60,000 x 28 x 28 pixels at once
+return pic_array.reshape(numOfImg, rows, columns)
 ```
 
 ### 2. Output an image to the console

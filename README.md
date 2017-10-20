@@ -32,7 +32,7 @@ Commit these image files to GitHub.
  - Output files will be in their respected subdirectories inside "/data" folder
 
 ### 1. Read the data files
-`pic_array = np.fromstring(f.read(numOfImg * rows * columns), np.dtype(('uint8', 1)))`  example reads 60,000 x 28 x 28 pixels at once
+`pic_array = np.fromstring(f.read(numOfImg * rows * columns), np.dtype(('uint8', 1)))` reads all the pixels at once
 `images = pic_array.reshape(numOfImg, rows, columns)` Transform 1D array into 3D array
 
 ### 2. Output an image to the console

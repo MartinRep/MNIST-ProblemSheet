@@ -5,6 +5,7 @@
 #              https://stackoverflow.com/questions/1274405/how-to-create-new-folder#1274465
 #              https://stackoverflow.com/questions/11760095/convert-binary-string-to-numpy-array
 #              https://docs.scipy.org/doc/numpy/reference/arrays.dtypes.html
+#              https://docs.python.org/2.3/whatsnew/section-enumerate.html
 import os
 import gzip
 import numpy as np

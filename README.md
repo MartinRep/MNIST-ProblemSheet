@@ -25,5 +25,42 @@ Commit these image files to GitHub.
 
 # Solution
 
+
+### 1. Read the data files
+```
+ arrays = [int.from_bytes(f.read(4), byteorder="big") for i in range(magic[3])] # Reads data arrays size 4 bytes each. Array size is defined by files magic number
+            numOfImg, rows, columns = arrays[0], arrays[1], arrays[2] # Just a transfer to more human readable variables
+            print("\nWorking on a file %s processing %d images. Please wait..." % (filename, numOfImg))
+            pic_array = np.fromstring(f.read(numOfImg * rows * columns), np.dtype(('uint8', 1)))    # example reads 60,000 x 28 x 28 pixels at once
+            return pic_array.reshape(numOfImg, rows, columns)
+```
+
+### 2. Output an image to the console
+```
+for column, col in enumerate(image): # enumerable used instead od range(len(image))
+        for pixel, pix in enumerate(col):
+            # print(image[column][pixel]) # Prints out the raw byte values of pixels as an image
+            if image[column][pixel] > 128: # Replaces pixel colors dark for '#' bright for '.'
+                print("#", end='')
+            else:
+                print(".", end='')
+        print("", end='\n')
+```
+
+### 3. Output the image files as PNGs
+```
+for index, image in enumerate(data[title]): # Loops over data hashmap of specified title, enumerating index too
+        cur_img = np.array(image)
+        cur_img = pil.fromarray(cur_img).convert('RGB') # PIL.Image library converts array into image
+        out_filename = '-{:06.0f}-'.format(index)  # formats filename to include zeros
+        out_dir = src_dir + title + "/"
+        out_filename = out_dir + title + out_filename + str(labels[title][index]) + ".png" # combines name with index and digit with extension
+        try:    # tries to create output directory.
+            os.makedirs(out_dir)
+        except OSError:
+            pass
+        cur_img.save(out_filename) # Saves the file
+```
+
 ### Output
 ![Execution times](https://github.com/MartinRep/MNIST-ProblemSheet/blob/master/MNIST%20Execution%20times.PNG)
